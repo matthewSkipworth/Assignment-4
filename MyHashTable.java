@@ -186,15 +186,16 @@ public class MyHashTable<K, V> {
 	   //Collections.reverse(frequencyList);
 	   return frequencyList;
    }
-   void printHistogram() {
+   ArrayList<Integer> histogram() {
 	   ArrayList<Integer> offsetFrequencies = getOffsetFrequencies();
 	   
-	   System.out.print("[" + offsetFrequencies.get(0));
-	   for (int i = 1; i < offsetFrequencies.size(); i++) {
-		   System.out.print(", " + offsetFrequencies.get(i));
-	   }
-	   System.out.println("]");
+	   //System.out.print("[" + offsetFrequencies.get(0));
 	   
+	   //for (int i = 0; i < offsetFrequencies.size(); i++) {
+		//   System.out.print(", " + offsetFrequencies.get(i));
+	  // }
+	   //System.out.println("]");
+	   return offsetFrequencies;
    }
 
    int getEntries() {
@@ -210,17 +211,25 @@ public class MyHashTable<K, V> {
 	   }
 	   return sum;
    }
+   double avgLinearProbing() {
+	   int sum = 0;
+	   for (int i = 0; i < histogram().size(); i++) {
+		   sum += histogram().get(i) * i;
+	   }
+	   return 1.0 * sum / getEntries();
+   }
    void stats() {
 	   System.out.println("\n\nHash Table Stats");
 	   System.out.println("=================");
 	   System.out.println("Number of Entries: " + this.getEntries());
 	   System.out.println("Number of Buckets: " + capacity);
-	   printHistogram();
-	   System.out.println("Fill Percentage: " + (100.0*this.getEntries() 
-	   					  / capacity) + "%");
+	   System.out.println(histogram());
+	   System.out.printf("Fill Percentage: %.6f", (100.0*this.getEntries() 
+	   					  / capacity));
+	   System.out.println("%");
 	   System.out.println("Max Linear Probe: " + getMaxOffset());
 	   getOffsetFrequencies();
-	   
+	   System.out.printf("Average Linear Probe: %.6f\n", avgLinearProbing());
 	   
    }
 }
