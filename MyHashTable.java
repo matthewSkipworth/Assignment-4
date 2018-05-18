@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MyHashTable<K, V> {
    
@@ -43,7 +44,6 @@ public class MyHashTable<K, V> {
       for(int i = 0; i < capacity; i++) {
          buckets.add(null);
       }
-   
    }
    
    public void put(K searchKey, V newValue) {
@@ -63,15 +63,18 @@ public class MyHashTable<K, V> {
                break;
             }
             probe++;
-            if(i == capacity) {
-               i = 0;
-            }
+        //    if(i == capacity) {
+         //      i = 0;
+        //    }
+            
             i++;
+            i = i % capacity;
          }
-         
-      
-      }
-      
+      } 
+   }
+   public Node indexGet(int bucketIndex) {
+	   Node bucketNode = buckets.get(bucketIndex);
+	   return bucketNode;
    }
    public V get(K key) {
       int hash = hash(key) % capacity;
@@ -91,7 +94,6 @@ public class MyHashTable<K, V> {
       }  else {
          return buckets.get(hash).getValue();
       }
-   
    }
    public boolean containsKey(K searchKey) {
      // boolean result = false;
@@ -137,12 +139,16 @@ public class MyHashTable<K, V> {
       char key0 = 'a';
       char key1 = 'b';
       char key2 = 'c';
-      char key3 = 'f';
+      char key3 = 'a';
       
       test.put(key0, "Hello");
       test.put(key1, "Matt");
       test.put(key2, "hey");
       test.put(key3, "tim");
+      test.put(key0, "Consuela");
+      test.put(key0,  "Oreo");
+      test.put(key0, "Roger");
+      //test.
       
       //System.out.println(test.get(key0).getOffset());
       System.out.println(test);
@@ -150,28 +156,45 @@ public class MyHashTable<K, V> {
       System.out.println(test.get('p'));
       System.out.println(test.containsKey('k'));
       test.stats();
+      System.out.println(test.toString());
+     // System.out.println(test.indexGet(0).getValue());
    }
    int getMaxOffset() {
 	   int max = 0;
 	   for (int i = 0; i < buckets.size(); i++) {
-		   if (buckets.get(i).offset > max) {
-			   max = buckets.get(i).offset;
-		   }
+		  if (buckets.get(i) != null) {
+			  if (buckets.get(i).getOffset() > max) {
+				  max = buckets.get(i).getOffset();
+			  }
+		  }
 	   }
 	   return max;
    }
-   void printHistogram() {
-	   ArrayList<Integer> offsets = new ArrayList<Integer>();
-	   for (int i = 0; i < buckets.size(); i++) {
+   ArrayList<Integer> getOffsetFrequencies() {
+	   ArrayList<Integer> frequencyList = new ArrayList<Integer>();
+	   for (int i = 0; i <= getMaxOffset(); i++) {
 		   int sum = 0;
 		   for (int j = 0; j < buckets.size(); j++) {
-			   System.out.println(buckets.get(j).getOffset());
-			   //if (buckets.get(j).getOffset() == i) {
-				   sum += j; 
-				   { }
+			   if (buckets.get(j) != null) {
+				   if (buckets.get(j).getOffset() == i) {
+					   sum++;
+				   }
+			   }
 		   }
-		   System.out.println(sum / i);
+		   frequencyList.add(sum);
 	   }
+	   //Collections.reverse(frequencyList);
+	   return frequencyList;
+   }
+   void printHistogram() {
+	   ArrayList<Integer> offsetFrequencies = getOffsetFrequencies();
+	   
+	   System.out.print("[" + offsetFrequencies.get(0));
+	   for (int i = 1; i < offsetFrequencies.size(); i++) {
+		   System.out.print(", " + offsetFrequencies.get(i));
+	   }
+	   System.out.println("]");
+	   
    }
 
    int getEntries() {
@@ -192,10 +215,11 @@ public class MyHashTable<K, V> {
 	   System.out.println("=================");
 	   System.out.println("Number of Entries: " + this.getEntries());
 	   System.out.println("Number of Buckets: " + capacity);
-	  // printHistogram();
+	   printHistogram();
 	   System.out.println("Fill Percentage: " + (100.0*this.getEntries() 
 	   					  / capacity) + "%");
-	   //System.out.println("Max Linear Probe: " + getMaxOffset());
+	   System.out.println("Max Linear Probe: " + getMaxOffset());
+	   getOffsetFrequencies();
 	   
 	   
    }
